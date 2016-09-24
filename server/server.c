@@ -39,6 +39,8 @@ int main(int argc, char **argv) {
   int i = 0;
   char userlist[10];
   int array_size;
+  char line[256];
+  int cred,flag;
 
   /*
    * check command line arguments
@@ -109,16 +111,31 @@ int main(int argc, char **argv) {
 	   hostp->h_name, hostaddrp);
     printf("server received %d/%d bytes: %s\n", strlen(buf), n, buf);
 
+    fp = fopen("users.txt", "r");
+    while (fgets(line, sizeof(line), fp)) {
+      //printf("%s\n",line);
+      cred = strncmp(buf,line,strlen(line)-1);
+      //printf("%d",strlen(line)-1);
+      if(cred == 0){
+        printf("Authenticated....");
+        flag = 1;
+        break;
+      }
+      else{
+        printf("Invalid username/password");
+      }
+}
+fclose(fp);
+
+
+
+
     /*reading user list */
     fp = fopen("users.txt", "r");
     while(!feof(fp)) {
       if( i%2 == 0 ) {
         fscanf(fp,"%s",str);
         printf("username:%s\n",str);
-        array_size = sizeof(userlist);
-        //userlist[array_size] = str;
-        strncpy(userlist, str, array_size-1);
-        printf("userlist :%s\n",userlist[array_size]);
       }
       else{
         fscanf(fp,"%s",str);
@@ -128,12 +145,16 @@ int main(int argc, char **argv) {
     }
     fclose(fp);
 
+
+
     /* writing user data into file */
 
     fp = fopen("users.txt", "a");
     //while( (buf = getchar()) != EOF) {
     fprintf(fp, "\n%s",buf);
     fclose(fp);
+
+
 
 
     /*
